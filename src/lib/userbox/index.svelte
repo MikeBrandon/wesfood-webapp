@@ -1,10 +1,24 @@
 <script>
     import { getAuth, signInWithRedirect, GoogleAuthProvider, signOut, getRedirectResult } from "firebase/auth";
-    import { userStore, tokenStore} from '$lib/stores/authStore';
+    import { userStore, tokenStore, registered} from '$lib/stores/authStore';
     import { onMount } from "svelte";
+    import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+
+    const db = getFirestore();
+
+    async function userExists() {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach((doc) => {
+            if (doc.id === $userStore.uid) {
+                return true;
+            };
+        });
+        return false;
+    }
 
     userStore.set(null);
     tokenStore.set(null);
+    registered.set(null);
 
     let logOutVisible = false;
 
@@ -41,6 +55,12 @@
             // The signed-in user info.
             userStore.set(result.user);
             // ...
+
+            if (userExists()) {
+                registered.set(1);
+            } else {
+                registered.set(0);
+            }
 
             console.log('token', $tokenStore);
             console.log('user', $userStore);

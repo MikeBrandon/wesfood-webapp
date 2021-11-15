@@ -2,18 +2,19 @@
     import { getAuth, signInWithRedirect, GoogleAuthProvider, signOut, getRedirectResult } from "firebase/auth";
     import { userStore, tokenStore, registered} from '$lib/stores/authStore';
     import { onMount } from "svelte";
-    import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
+    import { getFirestore, collection, getDocs } from "firebase/firestore";
 
     const db = getFirestore();
 
     async function userExists() {
         const querySnapshot = await getDocs(collection(db, "users"));
         querySnapshot.forEach((doc) => {
-            if (doc.id === $userStore.uid) {
-                return true;
+            if (doc.data().id == $userStore.uid) {
+                console.log('true', $userStore.uid + doc.data().id);
+                registered.set(1);
             };
         });
-        return false;
+        registered.set(0);
     }
 
     userStore.set(null);
@@ -41,6 +42,7 @@
         signOut(auth).then(() => {
             userStore.set(null);
             tokenStore.set(null);
+            registered.set(null);
         }).catch((error) => {
             console.log(error);
         });
@@ -56,11 +58,7 @@
             userStore.set(result.user);
             // ...
 
-            if (userExists()) {
-                registered.set(1);
-            } else {
-                registered.set(0);
-            }
+            userExists();
 
             console.log('token', $tokenStore);
             console.log('user', $userStore);

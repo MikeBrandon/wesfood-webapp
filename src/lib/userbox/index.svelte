@@ -1,6 +1,7 @@
 <script>
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+    import { getAuth, signInWithRedirect, GoogleAuthProvider, signOut, getRedirectResult } from "firebase/auth";
     import { userStore, tokenStore} from '$lib/stores/authStore';
+    import { onMount } from "svelte";
 
     userStore.set(null);
     tokenStore.set(null);
@@ -18,8 +19,22 @@
     function login() {
         const provider = new GoogleAuthProvider();
         const auth = getAuth();
-        signInWithPopup(auth, provider)
-        .then((result) => {
+        signInWithRedirect(auth, provider);
+    }
+
+    function logout() {
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            userStore.set(null);
+            tokenStore.set(null);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    onMount(() => {
+        const auth = getAuth();
+        getRedirectResult(auth).then((result) => {
             // This gives you a Google Access Token. You can use it to access the Google API.
             const credential = GoogleAuthProvider.credentialFromResult(result);
             tokenStore.set(credential.accessToken);
@@ -41,17 +56,7 @@
             const credential = GoogleAuthProvider.credentialFromError(error);
             // ...
         });
-    }
-
-    function logout() {
-        const auth = getAuth();
-        signOut(auth).then(() => {
-            userStore.set(null);
-            tokenStore.set(null);
-        }).catch((error) => {
-            console.log(error);
-        });
-    }
+    })
 </script>
 
 <main>

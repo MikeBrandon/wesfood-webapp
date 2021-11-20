@@ -37,8 +37,10 @@
 
     img {
         height: 50px;
-        width: auto;
+        width: 50px;
         object-fit: cover;
+        border-radius: 6px;
+        margin-right: 4px;
     }
 
     .cart-item {
@@ -64,6 +66,7 @@
 
     .delete {
         height: 30px;
+        width: auto;
         margin-left: 8px;
     }
 </style>

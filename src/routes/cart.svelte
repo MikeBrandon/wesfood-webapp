@@ -1,8 +1,14 @@
 <script>
     import CartItem from '$lib/cartItem/cartItem.svelte';
+    import { userStore } from '$lib/stores/authStore';
     import { myCart } from '$lib/stores/cartStore';
+    import { addDoc, collection, getFirestore } from '@firebase/firestore';
 
     let total = 0;
+    let payment = 1;
+    let orderPlaced = false;
+
+    const db = getFirestore();
 
     updateTotal();
 
@@ -19,26 +25,49 @@
     }
 
     async function confirmOrder() {
-        // try {
-        //     const docRef = await addDoc(collection(db, "orders"), {
-        //         name: 'testName'
-        //     });
-        //     console.log("Document written with ID: ", docRef.id);
-        // } catch (e) {
-        //     console.error("Error adding document: ", e);
-        // }
+        if ($userStore) {
+            if ($myCart.length > 0) {
+                try {
+                    const docRef = await addDoc(collection(db, "orders"), {
+                        user: $userStore.uid,
+                        orders: $myCart,
+                        time: new Date(),
+                        cash: (payment === 1) ? true : false
+                    });
+                    myCart.set([]);
+                    total = 0;
+                    alert('Order submitted. Please wait for a confirmation call.');
+                    orderPlaced = true;
+                    console.log("Document written with ID: ", docRef.id);
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                }
+            } else {
+                alert('You have nothing on your Cart!');
+            }
+        } else {
+            alert('Please Login first!');
+        }
     }
 </script>
 
 <style>
     * {
         margin: 0;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     }
 
     .total-price {
         font-size: 24px;
         font-weight: bold;
         text-align: right;
+    }
+
+    .bill {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: right;
+        text-decoration-line: underline;
     }
 
     .tax-price {
@@ -63,15 +92,26 @@
     }
 
     .button {
-        position: fixed;
         display: flex;
+    }
+
+    .footer {
+        position: fixed;
         bottom: 0;
         right: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
         padding: 8px;
     }
 
     .space {
         width: 8px;
+    }
+
+    .payment {
+        margin-bottom: 8px;
     }
 </style>
 
@@ -83,6 +123,9 @@
         {#each $myCart as cartItem, i}
             <CartItem {cartItem} on:itemDeleted={updateTotal}/>
         {/each}
+        <p class='bill'>
+            Bill
+        </p>
         <p class='total-price'>
             {total}
         </p>
@@ -103,14 +146,29 @@
         </p>
     </section>
     <section>
-        <div class='button'>
-            <button on:click={clearCart}>
-                Clear Cart
-            </button>
-            <div class="space"/>
-            <button on:click={confirmOrder}>
-                Confirm Order
-            </button>
+        <div class='footer'>
+            <div class='payment'>
+                <label>
+                    <input type=radio bind:group={payment} name="scoops" value={1}>
+                    Cash
+                </label>
+                
+                <label>
+                    <input type=radio bind:group={payment} name="scoops" value={2}>
+                    Credit Card
+                </label>
+            </div>
+            <div class='button'>
+                <button on:click={clearCart}>
+                    Clear Cart
+                </button>
+                <div class="space"/>
+                {#if !orderPlaced}
+                    <button on:click={confirmOrder}>
+                        Confirm Order
+                    </button>
+                {/if}
+            </div>
         </div>
     </section>
 </main>

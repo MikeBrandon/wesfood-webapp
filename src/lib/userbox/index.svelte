@@ -12,9 +12,12 @@
             if (doc.data().id == $userStore.uid) {
                 console.log('true', $userStore.uid + doc.data().id);
                 registered.set(1);
+            } else {
+                registered.set(0);
             };
         });
-        registered.set(0);
+        console.log($registered);
+        console.log($userStore);
     }
 
     userStore.set(null);
@@ -24,7 +27,7 @@
     let logOutVisible = false;
 
     function userTapped() {
-        if (logOutVisible == true) {
+        if (logOutVisible) {
             logOutVisible = false;
         } else {
             logOutVisible = true;
@@ -65,13 +68,8 @@
 
         }).catch((error) => {
             // Handle Errors here.
-            const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorMessage);
-            // The email of the user's account used.
-            const email = error.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
             // ...
         });
     })

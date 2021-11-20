@@ -1,6 +1,7 @@
 <script>
-import { registered } from "$lib/stores/authStore";
-import Registration from '$lib/registration/index.svelte'
+    import { registered } from "$lib/stores/authStore";
+    import Registration from '$lib/registration/index.svelte'
+    import Menu from '$lib/menu/index.svelte'
 </script>
 
 <main>
@@ -8,7 +9,7 @@ import Registration from '$lib/registration/index.svelte'
         {#if $registered == 0}
             <Registration/>
         {:else if $registered == 1}
-            Foods
+            <Menu/>
         {:else}
             Welcome to Wesfood!
         {/if}

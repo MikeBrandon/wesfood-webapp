@@ -1,15 +1,27 @@
 <script>
+    import { myCart } from '$lib/stores/cartStore';
     import UserBox from '$lib/userbox/index.svelte';
+    if (!$myCart) {
+        myCart.set([]);
+    }
 </script>
 
 <main>
     <div class='logo'>
         <img src="/gif/1.gif" alt="logo">
-        <h1>
+        <a href="/">
             Wesfood
-        </h1>
+        </a>
     </div>
-    <UserBox/>
+    <div class='right-side'>
+        <a href="/cart">
+            <div class='cart'>
+                <p>{$myCart.length}</p>
+                <img class='cart-img' src="/img/cart.png" alt="">
+            </div>
+        </a>
+        <UserBox/>
+    </div>
 </main>
 
 <style>
@@ -29,15 +41,35 @@
         margin-left: 8px;
     }
 
-    h1 {
-        margin-left: 4px;
-        font-size: 20px;
-        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    .cart-img {
+        color: white;
+        height: 20px;
+        width: auto;
+    }
+
+    .cart {
+        margin-right: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     img {
         border-radius: 25%;
         height: 40px;
         width: 40px;
+    }
+
+    a {
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+
+    .right-side {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>

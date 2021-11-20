@@ -2,11 +2,13 @@
     import CartItem from '$lib/cartItem/cartItem.svelte';
     import { userStore } from '$lib/stores/authStore';
     import { myCart } from '$lib/stores/cartStore';
-    import { addDoc, collection, getFirestore } from '@firebase/firestore';
+    import { addDoc, collection, getDocs, getFirestore } from '@firebase/firestore';
+    import { onMount } from 'svelte';
 
     let total = 0;
     let payment = 1;
     let orderPlaced = false;
+    let phone = null;
 
     const db = getFirestore();
 
@@ -24,12 +26,23 @@
         total = 0;
     }
 
+    async function getContact() {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            if (doc.data().id == $userStore.uid) {
+                phone = doc.data().phone;
+            }
+        });
+    }
+
     async function confirmOrder() {
         if ($userStore) {
             if ($myCart.length > 0) {
                 try {
                     const docRef = await addDoc(collection(db, "orders"), {
-                        user: $userStore.uid,
+                        user: $userStore.displayName,
+                        number: phone,
                         orders: $myCart,
                         time: new Date(),
                         cash: (payment === 1) ? true : false
@@ -49,6 +62,10 @@
             alert('Please Login first!');
         }
     }
+
+    onMount(() => {
+        getContact();
+    })
 </script>
 
 <style>
@@ -164,7 +181,7 @@
                 </button>
                 <div class="space"/>
                 {#if !orderPlaced}
-                    <button on:click={confirmOrder}>
+                    <button on:click={confirmOrder} disabled={!phone}>
                         Confirm Order
                     </button>
                 {/if}

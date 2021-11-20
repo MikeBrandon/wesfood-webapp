@@ -1,6 +1,6 @@
 <script>
     import { getAuth, signInWithRedirect, GoogleAuthProvider, signOut, getRedirectResult } from "firebase/auth";
-    import { userStore, tokenStore, registered} from '$lib/stores/authStore';
+    import { userStore, tokenStore, registered } from '$lib/stores/authStore';
     import { onMount } from "svelte";
     import { getFirestore, collection, getDocs } from "firebase/firestore";
 
@@ -20,9 +20,11 @@
         console.log($userStore);
     }
 
-    userStore.set(null);
-    tokenStore.set(null);
-    registered.set(null);
+    if (!$userStore) {
+        userStore.set(null);
+        tokenStore.set(null);
+        registered.set(null);
+    }
 
     let logOutVisible = false;
 
@@ -85,7 +87,9 @@
             {#if logOutVisible}
                 <div class="logout">
                     <button on:click={logout}>Logout</button>
-                    <button>Profile</button>
+                    <a href="/admin">
+                        <button>Admin</button>
+                    </a>
                 </div>
             {/if}
         </div>

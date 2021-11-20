@@ -1,6 +1,7 @@
 <script>
-	import { app } from '$lib/utils/firebase';
     import Navbar from '$lib/navbar/index.svelte';
+
+    import { app } from '$lib/utils/firebase';
     const myApp = app;
 </script>
 

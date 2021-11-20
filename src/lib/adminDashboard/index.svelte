@@ -9,7 +9,9 @@ import CartItem from "$lib/cartItem/cartItem.svelte";
 
     let isAddingFood = false;
     let foodShow = false;
+    let orderShow = false;
     let menuArray = [];
+    let orderArray = [];
     let fdName: string = '';
     let fdPrep: number = 0;
     let fdPrice: number = 0;
@@ -31,6 +33,8 @@ import CartItem from "$lib/cartItem/cartItem.svelte";
             isAddingFood = false;
         } else {
             isAddingFood = true;
+            foodShow = false;
+            orderShow = false;
         }
     }
 
@@ -39,6 +43,18 @@ import CartItem from "$lib/cartItem/cartItem.svelte";
             foodShow = false;
         } else {
             foodShow = true;
+            isAddingFood = false;
+            orderShow = false;
+        }
+    }
+
+    function showOrders() {
+        if (orderShow) {
+            orderShow = false;
+        } else {
+            orderShow = true;
+            isAddingFood = false;
+            foodShow = false;
         }
     }
 
@@ -72,14 +88,34 @@ import CartItem from "$lib/cartItem/cartItem.svelte";
         });
     }
 
+    async function getOrders() {
+        const querySnapshot = await getDocs(collection(db, "orders"));
+        orderArray = [];
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            orderArray.push({
+                id: doc.id,
+                data: doc.data()
+            });
+        });
+    }
+
+    async function completeOrder(orderId) {
+        await deleteDoc(doc(db, "orders", orderId));
+        alert('Order Complete');
+        getOrders();
+    }
+
     async function deleteFood(event) {
         await deleteDoc(doc(db, "menu", event.detail));
+        alert('Delted');
         getMenuItems();
     }
 
     onMount(() => {
         getNumberOfUsers();
         getMenuItems();
+        getOrders();
     })
 </script>
 
@@ -95,7 +131,10 @@ import CartItem from "$lib/cartItem/cartItem.svelte";
     <div class="foods">
         <div class='buttons'>
             <button on:click={showFoodAdd}>Add New Food</button>
+            <div class="space"></div>
             <button on:click={showFoods}>Show Foods</button>
+            <div class="space"></div>
+            <button on:click={showOrders}>Show Orders</button>
         </div>
         {#if isAddingFood}
             <div class='anf'>
@@ -136,6 +175,24 @@ import CartItem from "$lib/cartItem/cartItem.svelte";
                 {/each}
             </section>
         {/if}
+        {#if orderShow}
+            <section class='orders-section'>
+                {#each orderArray as order}
+                    <div class='order'>
+                        <p class='name'>{order.data.user}</p>
+                        <p class='Time'>{new Date(order.data.time * 1000).toDateString().substring(0, new Date(order.data.time * 1000).toDateString().length-4)}</p>
+                        <div class="food-orders">
+                            <ul>
+                                {#each order.data.orders as food}
+                                    <li>{food.name}</li>
+                                {/each}
+                            </ul>
+                        </div>
+                        <button on:click={completeOrder(order.id)}>Complete Order</button>
+                    </div>
+                {/each}
+            </section>
+        {/if}
     </div>
 </main>
 
@@ -168,5 +225,27 @@ import CartItem from "$lib/cartItem/cartItem.svelte";
         box-shadow: 2px 2px 2px 2px grey;
         padding: 8px;
         border-radius: 6px;
+    }
+
+    .space {
+        height: 4px;
+    }
+
+    .order {
+        border-radius: 3px;
+        box-shadow: grey 2px 2px 2px 2px;
+        margin-top: 8px;
+        padding: 8px;
+    }
+
+    .food-orders {
+        border-radius: 3px;
+        border: 1px solid;
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+
+    .orders-section {
+        display: flex;
     }
 </style>

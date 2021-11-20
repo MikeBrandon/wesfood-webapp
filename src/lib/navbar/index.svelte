@@ -1,6 +1,7 @@
 <script>
     import { myCart } from '$lib/stores/cartStore';
     import UserBox from '$lib/userbox/index.svelte';
+    
     if (!$myCart) {
         myCart.set([]);
     }

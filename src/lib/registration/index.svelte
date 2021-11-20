@@ -57,6 +57,11 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 </main>
 
 <style>
+    main {
+        color: black;
+        text-align: left;
+    }
+
     .phone {
         display: flex;
     }

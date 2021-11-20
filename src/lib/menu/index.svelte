@@ -22,7 +22,10 @@
 </script>
 
 <style>
-    
+    main {
+        color: black;
+        text-align: left;
+    }
 </style>
 
 <main>

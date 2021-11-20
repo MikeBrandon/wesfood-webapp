@@ -1,5 +1,8 @@
 <script>
     import { myCart } from "$lib/stores/cartStore";
+    import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
     export let cartItem;
 
@@ -10,6 +13,8 @@
             currentCart.splice(index, 1);
         }
         myCart.set(currentCart);
+
+        dispatch('itemDeleted');
     }
 </script>
 

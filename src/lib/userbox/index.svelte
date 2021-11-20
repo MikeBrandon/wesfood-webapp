@@ -123,6 +123,7 @@
         border: 1px solid black;
         padding: 4px;
         border-radius: 4px;
+        background-color: white;
     }
 
     .login-details > img {

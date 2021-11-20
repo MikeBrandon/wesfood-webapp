@@ -59,7 +59,11 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 <style>
     main {
         color: black;
-        text-align: left;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .phone {

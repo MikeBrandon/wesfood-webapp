@@ -29,6 +29,9 @@
 </style>
 
 <main>
+    <h2>
+        Menu
+    </h2>
     {#each menuArray as menuItem}
         <MenuItem {menuItem}/>
     {/each}

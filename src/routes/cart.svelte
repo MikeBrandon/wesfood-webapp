@@ -137,6 +137,9 @@
         <a href="/menu">
             Menu
         </a>
+        <h2>
+            Menu
+        </h2>
         {#each $myCart as cartItem, i}
             <CartItem {cartItem} on:itemDeleted={updateTotal} admin={false}/>
         {/each}

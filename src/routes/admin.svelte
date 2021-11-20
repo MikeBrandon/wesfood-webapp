@@ -8,6 +8,9 @@
 </script>
 
 <main>
+    <h2>
+        Admin
+    </h2>
     {#if $userStore}
         {#if userIsAdmin()}
             <AdminDashboard userName={$userStore.displayName}/>

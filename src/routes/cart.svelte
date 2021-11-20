@@ -121,7 +121,7 @@
             Menu
         </a>
         {#each $myCart as cartItem, i}
-            <CartItem {cartItem} on:itemDeleted={updateTotal}/>
+            <CartItem {cartItem} on:itemDeleted={updateTotal} admin={false}/>
         {/each}
         <p class='bill'>
             Bill

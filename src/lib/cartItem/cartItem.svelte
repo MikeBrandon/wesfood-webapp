@@ -5,16 +5,22 @@
 	const dispatch = createEventDispatcher();
 
     export let cartItem;
+    export let admin;
+    export let id = null;
 
     function deleteItem() {
-        let currentCart = [...$myCart];
-        const index = currentCart.indexOf(cartItem);
-        if (index > -1) {
-            currentCart.splice(index, 1);
-        }
-        myCart.set(currentCart);
+        if (!admin) {
+            let currentCart = [...$myCart];
+            const index = currentCart.indexOf(cartItem);
+            if (index > -1) {
+                currentCart.splice(index, 1);
+            }
+            myCart.set(currentCart);
 
-        dispatch('itemDeleted');
+            dispatch('itemDeleted');
+        } else {
+            dispatch('deleteMenu', id);
+        }
     }
 </script>
 

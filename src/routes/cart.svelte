@@ -134,11 +134,11 @@
 
 <main>
     <section>
-        <a href="/menu">
+        <a href="/">
             Menu
         </a>
         <h2>
-            Menu
+            Cart
         </h2>
         {#each $myCart as cartItem, i}
             <CartItem {cartItem} on:itemDeleted={updateTotal} admin={false}/>

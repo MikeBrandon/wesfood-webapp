@@ -12,10 +12,10 @@
             if (doc.data().id == $userStore.uid) {
                 console.log('true', $userStore.uid + doc.data().id);
                 registered.set(1);
-            } else {
-                registered.set(0);
-            };
+                return;
+            }
         });
+        registered.set(0);
         console.log($registered);
         console.log($userStore);
     }
